@@ -1,0 +1,30 @@
+{
+  "name": "taxi_lakehouse_pipeline",
+  "tasks": [
+    {
+      "task_key": "bronze_ingest",
+      "notebook_task": { "notebook_path": "/Repos/taxi-lakehouse/01_bronze_ingest" },
+      "new_cluster": {
+        "spark_version": "14.3.x-scala2.12",
+        "node_type_id": "i3.xlarge",
+        "num_workers": 2
+      }
+    },
+    {
+      "task_key": "silver_transform",
+      "depends_on": [{ "task_key": "bronze_ingest" }],
+      "notebook_task": { "notebook_path": "/Repos/taxi-lakehouse/02_silver_transform" },
+      "existing_cluster_id": "{{cluster_id}}"
+    },
+    {
+      "task_key": "gold_model",
+      "depends_on": [{ "task_key": "silver_transform" }],
+      "notebook_task": { "notebook_path": "/Repos/taxi-lakehouse/03_gold_model" },
+      "existing_cluster_id": "{{cluster_id}}"
+    }
+  ],
+  "schedule": {
+    "quartz_cron_expression": "0 0 6 * * ?",
+    "timezone_id": "America/New_York"
+  }
+}
