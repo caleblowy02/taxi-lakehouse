@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_timestamp
 
 spark = SparkSession.builder.getOrCreate()
-BUCKET = "taxi-lakehouse-<your-account-id>"
+BUCKET = "taxi-lakehouse-308946946086"
 
 df = spark.read.format("delta").load(f"s3a://{BUCKET}/bronze/yellow_taxi")
 

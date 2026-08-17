@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, monotonically_increasing_id, year, month, dayofmonth, dayofweek
 
 spark = SparkSession.builder.getOrCreate()
-BUCKET = "taxi-lakehouse-<your-account-id>"
+BUCKET = "taxi-lakehouse-308946946086"
 
 silver = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/yellow_taxi")
 

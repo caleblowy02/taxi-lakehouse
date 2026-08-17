@@ -3,7 +3,7 @@ from pyspark.sql.functions import current_timestamp, input_file_name
 
 spark = SparkSession.builder.getOrCreate()
 
-BUCKET = "taxi-lakehouse-<your-account-id>"
+BUCKET = "taxi-lakehouse-308946946086"
 SOURCE_PATH = "s3a://nyc-tlc/trip data/yellow_tripdata_2024-01.parquet"  # public NYC TLC bucket
 BRONZE_PATH = f"s3a://{BUCKET}/bronze/yellow_taxi"
 
