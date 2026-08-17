@@ -3,8 +3,10 @@ from pyspark.sql.functions import current_timestamp, col
 
 spark = SparkSession.builder.getOrCreate()
 
+# Fix for newer NYC TLC parquet files that trip up the vectorized reader
+spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+
 BUCKET = "taxi-lakehouse-308946946086"
-# SOURCE_PATH = "s3a://nyc-tlc/trip data/yellow_tripdata_2024-01.parquet"  # public NYC TLC bucket
 BRONZE_PATH = f"s3a://{BUCKET}/bronze/yellow_taxi"
 
 import urllib.request
@@ -13,15 +15,6 @@ LOCAL_TMP = "/Volumes/main/default/tmp_landing/yellow_tripdata_2024-01.parquet"
 CLOUDFRONT_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet"
 
 urllib.request.urlretrieve(CLOUDFRONT_URL, LOCAL_TMP)
-
-# --- DIAGNOSTIC: run this and check the output before continuing ---
-import os
-print("File exists:", os.path.exists(LOCAL_TMP))
-print("File size (bytes):", os.path.getsize(LOCAL_TMP))
-with open(LOCAL_TMP, "rb") as f:
-    header = f.read(300)
-print("First 300 bytes:", header)
-# --- END DIAGNOSTIC ---
 
 df_raw = spark.read.parquet(LOCAL_TMP)
 
