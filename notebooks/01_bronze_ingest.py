@@ -14,6 +14,15 @@ CLOUDFRONT_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdat
 
 urllib.request.urlretrieve(CLOUDFRONT_URL, LOCAL_TMP)
 
+# --- DIAGNOSTIC: run this and check the output before continuing ---
+import os
+print("File exists:", os.path.exists(LOCAL_TMP))
+print("File size (bytes):", os.path.getsize(LOCAL_TMP))
+with open(LOCAL_TMP, "rb") as f:
+    header = f.read(300)
+print("First 300 bytes:", header)
+# --- END DIAGNOSTIC ---
+
 df_raw = spark.read.parquet(LOCAL_TMP)
 
 df_bronze = (
