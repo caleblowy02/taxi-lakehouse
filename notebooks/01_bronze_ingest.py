@@ -39,8 +39,10 @@ df_bronze = (
     .save(BRONZE_PATH)
 )
 
+spark.sql("CREATE SCHEMA IF NOT EXISTS main.bronze")
+
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS bronze.yellow_taxi
+    CREATE TABLE IF NOT EXISTS main.bronze.yellow_taxi
     USING DELTA
     LOCATION '{BRONZE_PATH}'
 """)
