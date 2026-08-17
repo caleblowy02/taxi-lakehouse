@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import current_timestamp, input_file_name
+from pyspark.sql.functions import current_timestamp, col
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -19,7 +19,7 @@ df_raw = spark.read.parquet(LOCAL_TMP)
 df_bronze = (
     df_raw
     .withColumn("_ingested_at", current_timestamp())
-    .withColumn("_source_file", input_file_name())
+    .withColumn("_source_file", col("_metadata.file_path"))
 )
 
 (
