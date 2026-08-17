@@ -3,6 +3,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, monotonically_increasing_id, year, month, dayofmonth, dayofweek
 
 spark = SparkSession.builder.getOrCreate()
+spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+
 BUCKET = "taxi-lakehouse-308946946086"
 
 silver = spark.read.format("delta").load(f"s3a://{BUCKET}/silver/yellow_taxi")
@@ -46,10 +48,12 @@ fact_trips = (
 )
 fact_trips.write.format("delta").mode("overwrite").save(f"s3a://{BUCKET}/gold/fact_trips")
 
+spark.sql("CREATE SCHEMA IF NOT EXISTS main.gold")
+
 for tbl, path in [("dim_date", "dim_date"), ("dim_location", "dim_location"),
                    ("dim_vendor", "dim_vendor"), ("fact_trips", "fact_trips")]:
     spark.sql(f"""
-        CREATE TABLE IF NOT EXISTS gold.{tbl}
+        CREATE TABLE IF NOT EXISTS main.gold.{tbl}
         USING DELTA LOCATION 's3a://{BUCKET}/gold/{path}'
     """)
 
