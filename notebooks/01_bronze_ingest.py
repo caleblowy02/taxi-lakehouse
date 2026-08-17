@@ -3,7 +3,6 @@ from pyspark.sql.functions import current_timestamp, col
 
 spark = SparkSession.builder.getOrCreate()
 
-# Fix for newer NYC TLC parquet files that trip up the vectorized reader
 spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
 
 BUCKET = "taxi-lakehouse-308946946086"
@@ -16,7 +15,16 @@ CLOUDFRONT_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdat
 
 urllib.request.urlretrieve(CLOUDFRONT_URL, LOCAL_TMP)
 
+# COMMAND ----------
+
 df_raw = spark.read.parquet(LOCAL_TMP)
+df_raw.printSchema()
+
+# COMMAND ----------
+
+df_raw.count()
+
+# COMMAND ----------
 
 df_bronze = (
     df_raw
