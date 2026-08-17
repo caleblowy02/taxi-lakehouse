@@ -1,8 +1,9 @@
-# 02_silver_transform.py
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_timestamp
 
 spark = SparkSession.builder.getOrCreate()
+spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+
 BUCKET = "taxi-lakehouse-308946946086"
 
 df = spark.read.format("delta").load(f"s3a://{BUCKET}/bronze/yellow_taxi")
@@ -34,8 +35,10 @@ df_silver = (
     .save(f"s3a://{BUCKET}/silver/yellow_taxi")
 )
 
+spark.sql("CREATE SCHEMA IF NOT EXISTS main.silver")
+
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS silver.yellow_taxi
+    CREATE TABLE IF NOT EXISTS main.silver.yellow_taxi
     USING DELTA
     LOCATION 's3a://{BUCKET}/silver/yellow_taxi'
 """)
