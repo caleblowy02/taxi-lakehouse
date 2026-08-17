@@ -9,12 +9,12 @@ BRONZE_PATH = f"s3a://{BUCKET}/bronze/yellow_taxi"
 
 import urllib.request
 
-LOCAL_TMP = "/tmp/yellow_tripdata_2024-01.parquet"
+LOCAL_TMP = "/Volumes/main/default/tmp_landing/yellow_tripdata_2024-01.parquet"
 CLOUDFRONT_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet"
 
 urllib.request.urlretrieve(CLOUDFRONT_URL, LOCAL_TMP)
 
-df_raw = spark.read.parquet(f"file:{LOCAL_TMP}")
+df_raw = spark.read.parquet(LOCAL_TMP)
 
 df_bronze = (
     df_raw
